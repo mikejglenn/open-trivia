@@ -1,3 +1,44 @@
+.hidden {
+  display: none !important;
+}
+
 .container {
-  width: 800px;
+  max-width: 575px;
+  margin: 0 auto;
+
+  /* padding: 0 1.5rem; */
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+main .row {
+  justify-content: center;
+}
+
+.column-logo {
+  width: 10rem;
+  padding-top: 0.5rem;
+}
+
+.column-full,
+.column-half {
+  width: 100%;
+}
+
+@media screen and (width >= 768px) {
+  .container {
+    max-width: 800px;
+  }
+
+  .column-full,
+  .column-half {
+    padding: 0 /*0.75rem*/;
+  }
+
+  .column-half {
+    width: 50%;
+  }
 }

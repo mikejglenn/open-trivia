@@ -11,10 +11,195 @@
   </head>
   <body>
     <header>
-      <div class="container"></div>
+      <div class="container">
+        <div class="row">
+          <div class="column-logo">
+            <div class="open-logo">Open</div>
+            <div class="trivia-logo">Trivia</div>
+          </div>
+        </div>
+      </div>
     </header>
     <main>
-      <div class="container"></div>
+      <div class="container">
+        <div class="row">
+          <div class="score">
+            Score:
+            <span>0</span>
+          </div>
+        </div>
+        <div data-view="new-game">
+          <div class="row">
+            <button>New Game</button>
+          </div>
+        </div>
+        <div data-view="trivia-question" class="hidden">
+          <form>
+            <fieldset>
+              <legend>
+                According to Star Wars lore, which planet does Obi-Wan Kenobi
+                come from?
+              </legend>
+              <div>
+                <div>
+                  <input
+                    type="radio"
+                    id="answerChoice1"
+                    name="answer"
+                    value="naboo" />
+                  <label for="answerChoice1">Naboo</label>
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="answerChoice2"
+                    name="answer"
+                    value="alderaan" />
+                  <label for="answerChoice2">Alderaan</label>
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="answerChoice3"
+                    name="answer"
+                    value="stewjon" />
+                  <label for="answerChoice3">Stewjon</label>
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="answerChoice4"
+                    name="answer"
+                    value="tatooine" />
+                  <label for="answerChoice4">Tatooine</label>
+                </div>
+              </div>
+              <div>
+                <button type="submit">Submit</button>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+
+        <div data-view="correct-answer" class="hidden">
+          <div class="correct">Correct!</div>
+          <form>
+            <fieldset>
+              <legend>
+                According to Star Wars lore, which planet does Obi-Wan Kenobi
+                come from?
+              </legend>
+              <div>
+                <div>
+                  <input
+                    type="radio"
+                    id="answerChoice11"
+                    name="answer"
+                    value="naboo" />
+                  <label for="answerChoice11">Naboo</label>
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="answerChoice12"
+                    name="answer"
+                    value="alderaan" />
+                  <label for="answerChoice12">Alderaan</label>
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="answerChoice13"
+                    name="answer"
+                    value="stewjon"
+                    class="correct-radio"
+                    checked />
+                  <label for="answerChoice13" class="correct-label"
+                    >Stewjon</label
+                  >
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="answerChoice14"
+                    name="answer"
+                    value="tatooine" />
+                  <label for="answerChoice14">Tatooine</label>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+          <div class="row">
+            <button type="button" class="next-question">Next question</button>
+          </div>
+        </div>
+
+        <div data-view="incorrect-answer" class="hidden">
+          <div class="incorrect">INCORRECT!</div>
+          <form>
+            <fieldset>
+              <legend>
+                According to Star Wars lore, which planet does Obi-Wan Kenobi
+                come from?
+              </legend>
+              <div>
+                <div>
+                  <input
+                    type="radio"
+                    id="answerChoice21"
+                    name="answer"
+                    value="naboo" />
+                  <label for="answerChoice21">Naboo</label>
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="answerChoice22"
+                    name="answer"
+                    value="alderaan"
+                    class="incorrect-radio"
+                    checked />
+                  <label for="answerChoice22" class="incorrect-label"
+                    >Alderaan</label
+                  >
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="answerChoice23"
+                    name="answer"
+                    value="stewjon" />
+                  <label for="answerChoice23" class="correct-label"
+                    >Stewjon</label
+                  >
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="answerChoice24"
+                    name="answer"
+                    value="tatooine" />
+                  <label for="answerChoice24">Tatooine</label>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+          <div class="row">
+            <button type="button" class="next-question">Next question</button>
+          </div>
+        </div>
+
+        <div data-view="settings" class="hidden"></div>
+      </div>
     </main>
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>

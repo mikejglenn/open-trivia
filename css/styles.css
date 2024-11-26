@@ -1,5 +1,7 @@
 body {
   background-color: #383e4e;
+  font-family: sans-serif;
+  color: #fff;
 }
 
 header {
@@ -7,6 +9,74 @@ header {
   min-height: 60px;
 }
 
+.open-logo,
+.trivia-logo {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  line-height: 0.9;
+}
+
+.open-logo {
+  color: #ff7201;
+  font-size: 0.8rem;
+}
+
+.trivia-logo {
+  font-size: 2rem;
+}
+
 main {
   background-color: #383e4e;
+}
+
+.score {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+[data-view='new-game'] button {
+  background-color: #ff7201;
+  color: #fff;
+  font-size: 3rem;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.correct,
+.incorrect {
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.correct,
+.correct-label {
+  color: #65ff05;
+}
+
+.incorrect,
+.incorrect-label {
+  color: #f00;
+}
+
+.correct-radio {
+  accent-color: #65ff05;
+}
+
+.incorrect-radio {
+  accent-color: #f00;
+}
+
+.next-question {
+  background-color: #ff7201;
+  color: #fff;
+  text-align: center;
+  padding: 0.5rem;
+  border-radius: 10px;
+}
+
+[data-view='settings'] {
+  display: block;
 }
