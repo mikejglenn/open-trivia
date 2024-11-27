@@ -51,9 +51,48 @@ function renderTriviaQuestion(fetchedTriviaData: TriviaQuestion): HTMLElement {
   const $domTreeForm = document.createElement('form');
 
   const $divQuestion = document.createElement('div');
-  $divQuestion.innerHTML = fetchedTriviaData?.question;
+  $divQuestion.innerHTML = fetchedTriviaData.question;
+
+  const $divRadioGroup = document.createElement('div');
+
+  const randomCorrectIndex = Math.floor(Math.random() * 4);
+  const answers = fetchedTriviaData.incorrect_answers;
+  answers.splice(randomCorrectIndex, 0, fetchedTriviaData.correct_answer);
+
+  answers.forEach((_, i) => {
+    const $divAnswer = document.createElement('div');
+    const $inputAnswer = document.createElement('input');
+    const $labelAnswer = document.createElement('label');
+
+    let answerIndex;
+
+    if (randomCorrectIndex === i) {
+      $labelAnswer.innerHTML = fetchedTriviaData?.correct_answer;
+      answerIndex = i + 'c';
+    } else {
+      $labelAnswer.innerHTML = fetchedTriviaData?.incorrect_answers[i];
+      answerIndex = i;
+    }
+
+    $inputAnswer.type = 'radio';
+    $inputAnswer.name = 'answer';
+    $inputAnswer.value = 'answer' + answerIndex;
+    $inputAnswer.id = 'answerChoice' + answerIndex;
+    $labelAnswer.setAttribute('for', 'answerChoice' + answerIndex);
+
+    $divAnswer.appendChild($inputAnswer);
+    $divAnswer.appendChild($labelAnswer);
+
+    $divRadioGroup.appendChild($divAnswer);
+  });
+
+  const $buttonSubmit = document.createElement('button');
+  $buttonSubmit.type = 'submit';
+  $buttonSubmit.textContent = 'Submit';
 
   $domTreeForm.appendChild($divQuestion);
+  $domTreeForm.appendChild($divRadioGroup);
+  $domTreeForm.appendChild($buttonSubmit);
 
   return $domTreeForm;
 }
@@ -73,7 +112,7 @@ async function fetchTriviaData(
   }
 }
 
-const testRequest: TriviaQuestion = {
+const testResponse: TriviaQuestion = {
   category: 'Entertainment: Film',
   correct_answer: 'Stewjon',
   difficulty: 'hard',
@@ -84,15 +123,15 @@ const testRequest: TriviaQuestion = {
 };
 
 $newGameButton.addEventListener('click', async () => {
-  console.log(testRequest.correct_answer);
+  console.log(testResponse.correct_answer); //
 
   const fetchedTriviaData = await fetchTriviaData(
-    'https://opentdb.com/api.php?amount=1',
+    'https://opentdb.com/api.php?amount=1&type=multiple',
   );
-  console.log(fetchedTriviaData);
+  console.log(fetchedTriviaData); //
 
   if (fetchedTriviaData) {
-    $triviaQuestionView.appendChild(
+    $triviaQuestionView.prepend(
       renderTriviaQuestion(fetchedTriviaData.results[0]),
     );
   }
