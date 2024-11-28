@@ -56,7 +56,7 @@ function renderTriviaQuestion(fetchedTriviaData: TriviaQuestion): HTMLElement {
   const $divRadioGroup = document.createElement('div');
 
   const randomCorrectIndex = Math.floor(Math.random() * 4);
-  const answers = fetchedTriviaData.incorrect_answers;
+  const answers = [...fetchedTriviaData.incorrect_answers];
   answers.splice(randomCorrectIndex, 0, fetchedTriviaData.correct_answer);
 
   answers.forEach((_, i) => {
