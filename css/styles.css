@@ -35,6 +35,10 @@ main {
   padding: 1rem 0;
 }
 
+button {
+  cursor: pointer;
+}
+
 [data-view='new-game'] button {
   background-color: #ff7201;
   color: #fff;
@@ -56,10 +60,11 @@ form {
 
 .question {
   text-align: center;
+  line-height: 1.5;
 }
 
 input {
-  margin-top: 1rem;
+  margin: 1rem 0 0 4rem;
   appearance: none;
   border-radius: 50%;
   width: 16px;

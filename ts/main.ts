@@ -2,8 +2,11 @@ interface TriviaForm {
   answer: RadioNodeList;
 }
 
+let apiCallBlockTimer = false;
+
 const $scoreSpan = document.querySelector('.score span');
 const $newGameButton = document.querySelector('#new-game-button');
+const $nextButtons = document.querySelectorAll('.next-question');
 const $newGameView = document.querySelector('[data-view="new-game"]');
 const $triviaQuestionView = document.querySelector(
   '[data-view="trivia-question"]',
@@ -28,6 +31,7 @@ const $settingsView = document.querySelector('[data-view="settings"]');
 if (
   !$scoreSpan ||
   !$newGameButton ||
+  !$nextButtons ||
   !$newGameView ||
   !$triviaQuestionView ||
   !$triviaQuestionForm ||
@@ -37,7 +41,7 @@ if (
   !$incorrectAnswerForm ||
   !$settingsView
 ) {
-  throw new Error(`The $scoreSpan or $newGame or $newGameView or
+  throw new Error(`The $scoreSpan or $nextButtons or $newGame or $newGameView or
     $triviaQuestionView or $triviaQuestionForm or $correctAnswerView or
     $correctAnswerForm or $incorrectAnswerView or $incorrectAnswerForm or
     $settingsView query failed`);
@@ -169,17 +173,12 @@ $newGameButton.addEventListener('click', async () => {
   const fetchedTriviaData = await fetchTriviaData(
     'https://opentdb.com/api.php?amount=1&type=multiple',
   );
-  console.log(fetchedTriviaData); //
 
   if (fetchedTriviaData) {
     data.currentQuestion = fetchedTriviaData.results[0];
     const randomCorrectIndex = Math.floor(Math.random() * 4);
-    const answers = [...fetchedTriviaData.results[0].incorrect_answers];
-    answers.splice(
-      randomCorrectIndex,
-      0,
-      fetchedTriviaData.results[0].correct_answer,
-    );
+    const answers = [...data.currentQuestion.incorrect_answers];
+    answers.splice(randomCorrectIndex, 0, data.currentQuestion.correct_answer);
     data.currentAnswers = answers;
     $triviaQuestionForm.appendChild(
       renderTriviaQuestionAnswers(data.currentQuestion),
@@ -196,14 +195,53 @@ $triviaQuestionForm.addEventListener('submit', (event: Event) => {
   data.submittedAnswer = $triviaFormRadioAnswers.answer.value;
   if (data.submittedAnswer === data.currentQuestion?.correct_answer) {
     data.score++;
+    $correctAnswerForm.innerHTML = '';
     viewSwapAndUpdateScore('correct-answer');
     $correctAnswerForm.appendChild(
       renderTriviaQuestionAnswers(data.currentQuestion),
     );
   } else if (data.currentQuestion) {
+    $incorrectAnswerForm.innerHTML = '';
     viewSwapAndUpdateScore('incorrect-answer');
     $incorrectAnswerForm.appendChild(
       renderTriviaQuestionAnswers(data.currentQuestion),
     );
   }
+});
+
+$nextButtons.forEach((nButton) => {
+  nButton.addEventListener('click', async () => {
+    if (apiCallBlockTimer) {
+      alert('Please wait 5 seconds before clicking next question.');
+      return;
+    }
+    apiCallBlockTimer = true;
+    setTimeout(() => {
+      apiCallBlockTimer = false;
+    }, 5000);
+    $triviaQuestionForm.innerHTML = '';
+    viewSwapAndUpdateScore('trivia-question');
+
+    const fetchedTriviaData = await fetchTriviaData(
+      'https://opentdb.com/api.php?amount=1&type=multiple',
+    );
+
+    if (fetchedTriviaData) {
+      data.currentQuestion = fetchedTriviaData.results[0];
+      const randomCorrectIndex = Math.floor(Math.random() * 4);
+      const answers = [...data.currentQuestion.incorrect_answers];
+      answers.splice(
+        randomCorrectIndex,
+        0,
+        data.currentQuestion.correct_answer,
+      );
+      data.currentAnswers = answers;
+      $triviaQuestionForm.appendChild(
+        renderTriviaQuestionAnswers(data.currentQuestion),
+      );
+    }
+    data.entries.push(fetchedTriviaData as TriviaResponse);
+
+    writeData();
+  });
 });
