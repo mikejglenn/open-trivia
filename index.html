@@ -1,20 +1,88 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AJAX Project</title>
-  <link rel="icon" href="images/favicon.ico">
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-  <header>
-  </header>
-  <main>
-  </main>
-  <script src="js/data.js"></script>
-  <script src="js/main.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AJAX Project</title>
+    <link rel="icon" href="images/favicon.ico" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="row">
+          <div class="column-logo">
+            <div class="open-logo">Open</div>
+            <div class="trivia-logo">Trivia</div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main>
+      <div class="container">
+        <div class="row">
+          <div class="score">
+            Score:
+            <span>0</span>
+          </div>
+        </div>
+        <div data-view="new-game">
+          <div class="row">
+            <button id="new-game-button">New Game</button>
+          </div>
+        </div>
+
+        <div data-view="trivia-question" class="hidden">
+          <div class="row">
+            <div class="column-full">
+              <div class="placeholder">Placeholder</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column-two-thirds">
+              <form></form>
+            </div>
+          </div>
+        </div>
+
+        <div data-view="correct-answer" class="hidden">
+          <div class="row">
+            <div class="column-full">
+              <div class="correct">Correct!</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column-two-thirds">
+              <form></form>
+            </div>
+          </div>
+          <div class="row">
+            <button type="button" class="next-question">Next question</button>
+          </div>
+        </div>
+
+        <div data-view="incorrect-answer" class="hidden">
+          <div class="row">
+            <div class="column-full">
+              <div class="incorrect">Incorrect!</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column-two-thirds">
+              <form></form>
+            </div>
+          </div>
+          <div class="row">
+            <button type="button" class="next-question">Next question</button>
+          </div>
+        </div>
+
+        <div data-view="settings" class="hidden"></div>
+      </div>
+    </main>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+  </body>
 </html>

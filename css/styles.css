@@ -1,0 +1,139 @@
+body {
+  background-color: #383e4e;
+  font-family: sans-serif;
+  color: #fff;
+}
+
+header {
+  background-color: #262a35;
+  min-height: 60px;
+}
+
+.open-logo,
+.trivia-logo {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  line-height: 0.9;
+}
+
+.open-logo {
+  color: #ff7201;
+  font-size: 0.8rem;
+}
+
+.trivia-logo {
+  font-size: 2rem;
+}
+
+main {
+  background-color: #383e4e;
+}
+
+.score {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+button {
+  cursor: pointer;
+}
+
+[data-view='new-game'] button {
+  background-color: #ff7201;
+  color: #fff;
+  font-size: 3rem;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+}
+
+.placeholder {
+  visibility: hidden;
+}
+
+form {
+  padding: 0 2rem;
+}
+
+.question {
+  text-align: center;
+  line-height: 1.5;
+}
+
+input {
+  margin: 1rem 0 0 4rem;
+  appearance: none;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  transition: 0.2s all linear;
+  margin-right: 5px;
+  position: relative;
+  top: 2px;
+}
+
+input:checked {
+  border: 8px solid #fff;
+}
+
+input:disabled.correct-radio {
+  accent-color: #65ff05;
+  background-color: #65ff05;
+  color: #65ff05;
+  border-color: #65ff05;
+}
+
+input:disabled.incorrect-radio {
+  accent-color: #f00;
+  background-color: #f00;
+  color: #f00;
+  border-color: #f00;
+}
+
+label {
+  margin-left: 0.5rem;
+}
+
+[data-view='trivia-question'] button,
+.next-question {
+  background-color: #ff7201;
+  color: #fff;
+  text-align: center;
+  padding: 0.5rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+}
+
+.placeholder,
+.correct,
+.incorrect {
+  text-transform: uppercase;
+  text-align: center;
+  padding-bottom: 1rem;
+}
+
+.correct,
+.correct-label {
+  color: #65ff05;
+}
+
+.incorrect,
+.incorrect-label {
+  color: #f00;
+}
+
+.correct-radio {
+  accent-color: #65ff05;
+}
+
+.incorrect-radio {
+  accent-color: #f00;
+}
+
+[data-view='settings'] {
+  display: block;
+}
