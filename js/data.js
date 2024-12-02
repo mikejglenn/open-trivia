@@ -8,6 +8,9 @@ function readData() {
       view: 'new-game',
       entries: [],
       currentQuestion: null,
+      currentAnswers: null,
+      submittedAnswer: '',
+      score: 0,
       nextEntryId: 1,
     };
   }

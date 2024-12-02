@@ -5,8 +5,6 @@
 .container {
   max-width: 575px;
   margin: 0 auto;
-
-  /* padding: 0 1.5rem; */
 }
 
 .row {
@@ -35,10 +33,14 @@ main .row {
 
   .column-full,
   .column-half {
-    padding: 0 /*0.75rem*/;
+    padding: 0;
   }
 
   .column-half {
     width: 50%;
+  }
+
+  .column-two-thirds {
+    flex-basis: calc(100% / 3 * 2);
   }
 }

@@ -17,6 +17,9 @@ interface Data {
   view: string;
   entries: TriviaResponse[];
   currentQuestion: TriviaQuestion | null;
+  currentAnswers: string[] | null;
+  submittedAnswer: string;
+  score: number;
   nextEntryId: number;
 }
 
@@ -29,6 +32,9 @@ function readData(): Data {
       view: 'new-game',
       entries: [],
       currentQuestion: null,
+      currentAnswers: null,
+      submittedAnswer: '',
+      score: 0,
       nextEntryId: 1,
     };
   }

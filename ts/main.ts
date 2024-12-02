@@ -2,6 +2,7 @@ interface TriviaForm {
   answer: RadioNodeList;
 }
 
+const $scoreSpan = document.querySelector('.score span');
 const $newGameButton = document.querySelector('#new-game-button');
 const $newGameView = document.querySelector('[data-view="new-game"]');
 const $triviaQuestionView = document.querySelector(
@@ -13,22 +14,32 @@ const $triviaQuestionForm = document.querySelector(
 const $correctAnswerView = document.querySelector(
   '[data-view="correct-answer"]',
 );
+const $correctAnswerForm = document.querySelector(
+  '[data-view="correct-answer"] form',
+);
 const $incorrectAnswerView = document.querySelector(
   '[data-view="incorrect-answer"]',
+);
+const $incorrectAnswerForm = document.querySelector(
+  '[data-view="incorrect-answer"] form',
 );
 const $settingsView = document.querySelector('[data-view="settings"]');
 
 if (
+  !$scoreSpan ||
   !$newGameButton ||
   !$newGameView ||
   !$triviaQuestionView ||
   !$triviaQuestionForm ||
   !$correctAnswerView ||
+  !$correctAnswerForm ||
   !$incorrectAnswerView ||
+  !$incorrectAnswerForm ||
   !$settingsView
 ) {
-  throw new Error(`The $newGame or $newGameView or $triviaQuestionView or
-    $triviaQuestionForm or $correctAnswerView or $incorrectAnswerView or
+  throw new Error(`The $scoreSpan or $newGame or $newGameView or
+    $triviaQuestionView or $triviaQuestionForm or $correctAnswerView or
+    $correctAnswerForm or $incorrectAnswerView or $incorrectAnswerForm or
     $settingsView query failed`);
 }
 
@@ -40,7 +51,8 @@ const views = [
   $settingsView,
 ];
 
-function viewSwap(viewName: string): void {
+function viewSwapAndUpdateScore(viewName: string): void {
+  if ($scoreSpan) $scoreSpan.innerHTML = `${data.score}`;
   views.forEach((_, i) => {
     if (viewName === views[i].getAttribute('data-view')) {
       views[i].classList.remove('hidden');
@@ -50,56 +62,6 @@ function viewSwap(viewName: string): void {
   });
   data.view = viewName;
   writeData();
-}
-
-function renderTriviaQuestion(fetchedTriviaData: TriviaQuestion): HTMLElement {
-  const $domTreeDiv = document.createElement('div');
-
-  const $divQuestion = document.createElement('div');
-  $divQuestion.innerHTML = fetchedTriviaData.question;
-
-  const $divRadioGroup = document.createElement('div');
-
-  const randomCorrectIndex = Math.floor(Math.random() * 4);
-  const answers = [...fetchedTriviaData.incorrect_answers];
-  answers.splice(randomCorrectIndex, 0, fetchedTriviaData.correct_answer);
-
-  answers.forEach((_, i) => {
-    const $divAnswer = document.createElement('div');
-    const $inputAnswer = document.createElement('input');
-    const $labelAnswer = document.createElement('label');
-
-    let answerIndex;
-    $labelAnswer.innerHTML = answers[i];
-
-    if (randomCorrectIndex === i) {
-      answerIndex = i + 'c';
-    } else {
-      answerIndex = i;
-    }
-
-    $inputAnswer.type = 'radio';
-    $inputAnswer.name = 'answer';
-    $inputAnswer.value = answers[i];
-    $inputAnswer.id = 'answerChoice' + answerIndex;
-    $inputAnswer.required = true;
-    $labelAnswer.setAttribute('for', 'answerChoice' + answerIndex);
-
-    $divAnswer.appendChild($inputAnswer);
-    $divAnswer.appendChild($labelAnswer);
-
-    $divRadioGroup.appendChild($divAnswer);
-  });
-
-  const $buttonSubmit = document.createElement('button');
-  $buttonSubmit.type = 'submit';
-  $buttonSubmit.textContent = 'Submit';
-
-  $domTreeDiv.appendChild($divQuestion);
-  $domTreeDiv.appendChild($divRadioGroup);
-  $domTreeDiv.appendChild($buttonSubmit);
-
-  return $domTreeDiv;
 }
 
 async function fetchTriviaData(
@@ -113,25 +75,96 @@ async function fetchTriviaData(
     const data = (await response.json()) as TriviaResponse;
     return data;
   } catch (error) {
-    console.error('Error:', error);
+    alert('Error:' + error);
   }
 }
 
-const testResponse: TriviaQuestion = {
-  category: 'Entertainment: Film',
-  correct_answer: 'Stewjon',
-  difficulty: 'hard',
-  incorrect_answers: ['Naboo', 'Alderaan', 'Tatooine'],
-  question:
-    'According to "Star Wars" lore, which planet does Obi-Wan Kenobi come from?',
-  type: 'multiple',
-};
+function renderTriviaQuestionAnswers(
+  fetchedTriviaData: TriviaQuestion,
+): HTMLElement {
+  const $domTreeDiv = document.createElement('div');
+
+  const $divQuestion = document.createElement('div');
+  $divQuestion.innerHTML = fetchedTriviaData.question;
+  $divQuestion.classList.add('question');
+
+  const $divRadioGroup = document.createElement('div');
+
+  if (data.currentAnswers) {
+    data.currentAnswers.forEach((answer, i) => {
+      const $divAnswer = document.createElement('div');
+      const $inputAnswer = document.createElement('input');
+      const $labelAnswer = document.createElement('label');
+
+      let answerIndex;
+      $labelAnswer.innerHTML = answer;
+
+      if (answer === data.currentQuestion?.correct_answer) {
+        answerIndex = i + 'c';
+      } else {
+        answerIndex = i;
+      }
+
+      if (data.view === 'correct-answer') {
+        $inputAnswer.disabled = true;
+        if (answer === data.submittedAnswer) {
+          $inputAnswer.classList.add('correct-radio');
+          $inputAnswer.checked = true;
+          $labelAnswer.classList.add('correct-label');
+        }
+      }
+
+      if (data.view === 'incorrect-answer') {
+        $inputAnswer.disabled = true;
+        if (answer === data.submittedAnswer) {
+          $inputAnswer.classList.add('incorrect-radio');
+          $inputAnswer.checked = true;
+          $labelAnswer.classList.add('incorrect-label');
+        }
+        if (answer === data.currentQuestion?.correct_answer) {
+          $labelAnswer.classList.add('correct-label');
+        }
+      }
+
+      $inputAnswer.type = 'radio';
+      $inputAnswer.name = 'answer';
+      $inputAnswer.value = answer;
+      $inputAnswer.id = 'answerChoice' + answerIndex;
+      $inputAnswer.required = true;
+      $labelAnswer.setAttribute('for', 'answerChoice' + answerIndex);
+
+      $divAnswer.appendChild($inputAnswer);
+      $divAnswer.appendChild($labelAnswer);
+
+      $divRadioGroup.appendChild($divAnswer);
+    });
+  }
+
+  const $divButtonWrap = document.createElement('div');
+  $divButtonWrap.classList.add('row');
+
+  const $buttonSubmit = document.createElement('button');
+  $buttonSubmit.type = 'submit';
+  $buttonSubmit.textContent = 'Submit';
+
+  $domTreeDiv.appendChild($divQuestion);
+  $domTreeDiv.appendChild($divRadioGroup);
+
+  $divButtonWrap.appendChild($buttonSubmit);
+  if (data.view === 'trivia-question') $domTreeDiv.appendChild($divButtonWrap);
+
+  return $domTreeDiv;
+}
 
 $newGameButton.addEventListener('click', async () => {
-  console.log(testResponse.correct_answer); //
   data.entries = [];
   data.currentQuestion = null;
+  data.currentAnswers = null;
+  data.submittedAnswer = '';
+  data.score = 0;
   data.nextEntryId = 1;
+
+  viewSwapAndUpdateScore('trivia-question');
 
   const fetchedTriviaData = await fetchTriviaData(
     'https://opentdb.com/api.php?amount=1&type=multiple',
@@ -140,24 +173,37 @@ $newGameButton.addEventListener('click', async () => {
 
   if (fetchedTriviaData) {
     data.currentQuestion = fetchedTriviaData.results[0];
+    const randomCorrectIndex = Math.floor(Math.random() * 4);
+    const answers = [...fetchedTriviaData.results[0].incorrect_answers];
+    answers.splice(
+      randomCorrectIndex,
+      0,
+      fetchedTriviaData.results[0].correct_answer,
+    );
+    data.currentAnswers = answers;
     $triviaQuestionForm.appendChild(
-      renderTriviaQuestion(fetchedTriviaData.results[0]),
+      renderTriviaQuestionAnswers(data.currentQuestion),
     );
   }
   data.entries.push(fetchedTriviaData as TriviaResponse);
 
-  viewSwap('trivia-question');
   writeData();
 });
 
 $triviaQuestionForm.addEventListener('submit', (event: Event) => {
   event.preventDefault();
-  const $formElements = $triviaQuestionForm as unknown;
-  const $triviaFormRadioAnswers = $formElements as TriviaForm;
-  const $triviaAnswerValue = $triviaFormRadioAnswers.answer.value;
-  if ($triviaAnswerValue === data.currentQuestion?.correct_answer) {
-    viewSwap('correct-answer');
-  } else {
-    viewSwap('incorrect-answer');
+  const $triviaFormRadioAnswers = $triviaQuestionForm as unknown as TriviaForm;
+  data.submittedAnswer = $triviaFormRadioAnswers.answer.value;
+  if (data.submittedAnswer === data.currentQuestion?.correct_answer) {
+    data.score++;
+    viewSwapAndUpdateScore('correct-answer');
+    $correctAnswerForm.appendChild(
+      renderTriviaQuestionAnswers(data.currentQuestion),
+    );
+  } else if (data.currentQuestion) {
+    viewSwapAndUpdateScore('incorrect-answer');
+    $incorrectAnswerForm.appendChild(
+      renderTriviaQuestionAnswers(data.currentQuestion),
+    );
   }
 });
