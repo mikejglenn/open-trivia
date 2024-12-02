@@ -1,11 +1,14 @@
-// interface FormElements extends HTMLFormControlsCollection {
-//   answer: HTMLInputElement;
-// }
+interface TriviaForm {
+  answer: RadioNodeList;
+}
 
 const $newGameButton = document.querySelector('#new-game-button');
 const $newGameView = document.querySelector('[data-view="new-game"]');
 const $triviaQuestionView = document.querySelector(
   '[data-view="trivia-question"]',
+);
+const $triviaQuestionForm = document.querySelector(
+  '[data-view="trivia-question"] form',
 );
 const $correctAnswerView = document.querySelector(
   '[data-view="correct-answer"]',
@@ -19,12 +22,14 @@ if (
   !$newGameButton ||
   !$newGameView ||
   !$triviaQuestionView ||
+  !$triviaQuestionForm ||
   !$correctAnswerView ||
   !$incorrectAnswerView ||
   !$settingsView
 ) {
   throw new Error(`The $newGame or $newGameView or $triviaQuestionView or
-    $correctAnswerView or $incorrectAnswerView or $settingsView query failed`);
+    $triviaQuestionForm or $correctAnswerView or $incorrectAnswerView or
+    $settingsView query failed`);
 }
 
 const views = [
@@ -48,7 +53,7 @@ function viewSwap(viewName: string): void {
 }
 
 function renderTriviaQuestion(fetchedTriviaData: TriviaQuestion): HTMLElement {
-  const $domTreeForm = document.createElement('form');
+  const $domTreeDiv = document.createElement('div');
 
   const $divQuestion = document.createElement('div');
   $divQuestion.innerHTML = fetchedTriviaData.question;
@@ -65,19 +70,19 @@ function renderTriviaQuestion(fetchedTriviaData: TriviaQuestion): HTMLElement {
     const $labelAnswer = document.createElement('label');
 
     let answerIndex;
+    $labelAnswer.innerHTML = answers[i];
 
     if (randomCorrectIndex === i) {
-      $labelAnswer.innerHTML = fetchedTriviaData?.correct_answer;
       answerIndex = i + 'c';
     } else {
-      $labelAnswer.innerHTML = fetchedTriviaData?.incorrect_answers[i];
       answerIndex = i;
     }
 
     $inputAnswer.type = 'radio';
     $inputAnswer.name = 'answer';
-    $inputAnswer.value = 'answer' + answerIndex;
+    $inputAnswer.value = answers[i];
     $inputAnswer.id = 'answerChoice' + answerIndex;
+    $inputAnswer.required = true;
     $labelAnswer.setAttribute('for', 'answerChoice' + answerIndex);
 
     $divAnswer.appendChild($inputAnswer);
@@ -90,11 +95,11 @@ function renderTriviaQuestion(fetchedTriviaData: TriviaQuestion): HTMLElement {
   $buttonSubmit.type = 'submit';
   $buttonSubmit.textContent = 'Submit';
 
-  $domTreeForm.appendChild($divQuestion);
-  $domTreeForm.appendChild($divRadioGroup);
-  $domTreeForm.appendChild($buttonSubmit);
+  $domTreeDiv.appendChild($divQuestion);
+  $domTreeDiv.appendChild($divRadioGroup);
+  $domTreeDiv.appendChild($buttonSubmit);
 
-  return $domTreeForm;
+  return $domTreeDiv;
 }
 
 async function fetchTriviaData(
@@ -124,6 +129,9 @@ const testResponse: TriviaQuestion = {
 
 $newGameButton.addEventListener('click', async () => {
   console.log(testResponse.correct_answer); //
+  data.entries = [];
+  data.currentQuestion = null;
+  data.nextEntryId = 1;
 
   const fetchedTriviaData = await fetchTriviaData(
     'https://opentdb.com/api.php?amount=1&type=multiple',
@@ -131,10 +139,25 @@ $newGameButton.addEventListener('click', async () => {
   console.log(fetchedTriviaData); //
 
   if (fetchedTriviaData) {
-    $triviaQuestionView.prepend(
+    data.currentQuestion = fetchedTriviaData.results[0];
+    $triviaQuestionForm.appendChild(
       renderTriviaQuestion(fetchedTriviaData.results[0]),
     );
   }
+  data.entries.push(fetchedTriviaData as TriviaResponse);
+
   viewSwap('trivia-question');
   writeData();
+});
+
+$triviaQuestionForm.addEventListener('submit', (event: Event) => {
+  event.preventDefault();
+  const $formElements = $triviaQuestionForm as unknown;
+  const $triviaFormRadioAnswers = $formElements as TriviaForm;
+  const $triviaAnswerValue = $triviaFormRadioAnswers.answer.value;
+  if ($triviaAnswerValue === data.currentQuestion?.correct_answer) {
+    viewSwap('correct-answer');
+  } else {
+    viewSwap('incorrect-answer');
+  }
 });

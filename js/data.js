@@ -7,6 +7,7 @@ function readData() {
     return {
       view: 'new-game',
       entries: [],
+      currentQuestion: null,
       nextEntryId: 1,
     };
   }

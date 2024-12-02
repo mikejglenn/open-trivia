@@ -16,6 +16,7 @@ interface TriviaResponse {
 interface Data {
   view: string;
   entries: TriviaResponse[];
+  currentQuestion: TriviaQuestion | null;
   nextEntryId: number;
 }
 
@@ -27,6 +28,7 @@ function readData(): Data {
     return {
       view: 'new-game',
       entries: [],
+      currentQuestion: null,
       nextEntryId: 1,
     };
   }

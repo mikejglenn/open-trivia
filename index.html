@@ -33,10 +33,14 @@
             <button id="new-game-button">New Game</button>
           </div>
         </div>
-        <div data-view="trivia-question" class="hidden"></div>
+
+        <div data-view="trivia-question" class="hidden">
+          <form></form>
+        </div>
 
         <div data-view="correct-answer" class="hidden">
           <div class="correct">Correct!</div>
+          <form></form>
           <div class="row">
             <button type="button" class="next-question">Next question</button>
           </div>
@@ -44,6 +48,7 @@
 
         <div data-view="incorrect-answer" class="hidden">
           <div class="incorrect">INCORRECT!</div>
+          <form></form>
           <div class="row">
             <button type="button" class="next-question">Next question</button>
           </div>
