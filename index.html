@@ -8,14 +8,30 @@
     <link rel="stylesheet" href="css/reset.css" />
     <link rel="stylesheet" href="css/layout.css" />
     <link rel="stylesheet" href="css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
   </head>
   <body>
     <header>
       <div class="container">
         <div class="row">
           <div class="column-logo">
-            <div class="open-logo">Open</div>
-            <div class="trivia-logo">Trivia</div>
+            <a>
+              <div class="open-logo">Open</div>
+              <div class="trivia-logo">Trivia</div>
+            </a>
+          </div>
+          <div class="nav-mobile">
+            <div class="nav-mobile-items hidden">
+              <a class="nav-mobile-item new-game-button">New Game</a>
+              <a class="nav-mobile-item settings-button">Settings</a>
+            </div>
+            <i class="fa-solid fa-bars"></i>
+          </div>
+          <div class="nav-desk">
+            <a class="nav-desk-item new-game-button">New Game</a>
+            <a class="nav-desk-item settings-button">Settings</a>
           </div>
         </div>
       </div>
@@ -30,7 +46,7 @@
         </div>
         <div data-view="new-game">
           <div class="row">
-            <button id="new-game-button">New Game</button>
+            <button class="new-game-button">New Game</button>
           </div>
         </div>
 
@@ -79,7 +95,43 @@
           </div>
         </div>
 
-        <div data-view="settings" class="hidden"></div>
+        <div data-view="settings" class="hidden">
+          <div class="row">
+            <div class="column-full">
+              <div class="settings-text">Settings</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column-two-thirds">
+              <form>
+                <div class="categories-label"></div>
+                <div class="categories"></div>
+                <div>
+                  <label for="difficulty">Select Difficulty:</label>
+                </div>
+                <div>
+                  <select id="difficulty" name="difficulty">
+                    <option value="">Select</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="type">Select Type:</label>
+                </div>
+                <div>
+                  <select id="type" name="type">
+                    <option value="">Select</option>
+                    <option value="multiple">Multiple Choice</option>
+                    <option value="boolean">True / False</option>
+                  </select>
+                </div>
+                <button type="submit">Save</button>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
     <script src="js/data.js"></script>

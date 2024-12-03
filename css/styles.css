@@ -26,6 +26,38 @@ header {
   font-size: 2rem;
 }
 
+.nav-mobile i {
+  font-size: 1.5rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #fff;
+  border-radius: 10px;
+  margin: 0.6rem 1.5rem 0 0;
+  height: 2.5rem;
+  cursor: pointer;
+}
+
+.nav-mobile-item {
+  display: block;
+  background-color: #0f1115;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  margin: 0.7rem 1rem 0.7rem 0;
+}
+
+.nav-desk-item {
+  display: inline-block;
+  background-color: #0f1115;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  margin: 0.7rem 1rem 0.7rem 0;
+}
+
+.nav-mobile i:hover,
+.nav-mobile-item:hover,
+.nav-desk-item:hover {
+  background-color: #5c6378;
+}
+
 main {
   background-color: #383e4e;
 }
@@ -35,6 +67,7 @@ main {
   padding: 1rem 0;
 }
 
+a,
 button {
   cursor: pointer;
 }
@@ -63,8 +96,8 @@ form {
   line-height: 1.5;
 }
 
-input {
-  margin: 1rem 0 0 4rem;
+input[type='radio'] {
+  margin: 1rem 0 0 5rem;
   appearance: none;
   border-radius: 50%;
   width: 16px;
@@ -76,18 +109,22 @@ input {
   top: 2px;
 }
 
-input:checked {
+input[type='radio']:hover {
+  border-color: #7f89a8;
+}
+
+input[type='radio']:checked {
   border: 8px solid #fff;
 }
 
-input:disabled.correct-radio {
+input[type='radio']:disabled.correct-radio {
   accent-color: #65ff05;
   background-color: #65ff05;
   color: #65ff05;
   border-color: #65ff05;
 }
 
-input:disabled.incorrect-radio {
+input[type='radio']:disabled.incorrect-radio {
   accent-color: #f00;
   background-color: #f00;
   color: #f00;
@@ -99,7 +136,8 @@ label {
 }
 
 [data-view='trivia-question'] button,
-.next-question {
+.next-question,
+[data-view='settings'] button {
   background-color: #ff7201;
   color: #fff;
   text-align: center;
@@ -108,9 +146,17 @@ label {
   margin-top: 1rem;
 }
 
+[data-view='new-game'] button:hover,
+[data-view='trivia-question'] button:hover,
+.next-question,
+[data-view='settings'] button:hover {
+  background-color: #f90;
+}
+
 .placeholder,
 .correct,
-.incorrect {
+.incorrect,
+.settings-text {
   text-transform: uppercase;
   text-align: center;
   padding-bottom: 1rem;
@@ -134,6 +180,24 @@ label {
   accent-color: #f00;
 }
 
-[data-view='settings'] {
-  display: block;
+[data-view='settings'] form {
+  text-align: center;
+}
+
+[data-view='settings'] label {
+  display: inline-block;
+  margin: 1rem 0 0.2rem;
+}
+
+[data-view='settings'] input,
+[data-view='settings'] select {
+  width: 100%;
+  padding: 0.2rem;
+}
+
+@media screen and (width >= 768px) {
+  [data-view='settings'] input,
+  [data-view='settings'] select {
+    width: 70%;
+  }
 }

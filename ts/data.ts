@@ -20,6 +20,9 @@ interface Data {
   currentAnswers: string[] | null;
   submittedAnswer: string;
   score: number;
+  category: string;
+  difficulty: string;
+  type: string;
   nextEntryId: number;
 }
 
@@ -35,7 +38,10 @@ function readData(): Data {
       currentAnswers: null,
       submittedAnswer: '',
       score: 0,
-      nextEntryId: 1,
+      category: '',
+      difficulty: '',
+      type: '',
+      nextEntryId: 0,
     };
   }
 }

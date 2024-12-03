@@ -1,7 +1,10 @@
 'use strict';
 let apiCallBlockTimer = false;
+const $mobileNavMenu = document.querySelector('.nav-mobile-items');
+const $hamburgerMenu = document.querySelector('.nav-mobile i');
+const $settingsButtons = document.querySelectorAll('.settings-button');
 const $scoreSpan = document.querySelector('.score span');
-const $newGameButton = document.querySelector('#new-game-button');
+const $newGameButtons = document.querySelectorAll('.new-game-button');
 const $nextButtons = document.querySelectorAll('.next-question');
 const $newGameView = document.querySelector('[data-view="new-game"]');
 const $triviaQuestionView = document.querySelector(
@@ -23,9 +26,15 @@ const $incorrectAnswerForm = document.querySelector(
   '[data-view="incorrect-answer"] form',
 );
 const $settingsView = document.querySelector('[data-view="settings"]');
+const $settingsForm = document.querySelector('[data-view="settings"] form');
+const $settingsCategories = document.querySelector('.categories');
+const $settingsCategoriesLabel = document.querySelector('.categories-label');
 if (
+  !$mobileNavMenu ||
+  !$hamburgerMenu ||
+  !$settingsButtons ||
   !$scoreSpan ||
-  !$newGameButton ||
+  !$newGameButtons ||
   !$nextButtons ||
   !$newGameView ||
   !$triviaQuestionView ||
@@ -34,12 +43,17 @@ if (
   !$correctAnswerForm ||
   !$incorrectAnswerView ||
   !$incorrectAnswerForm ||
-  !$settingsView
+  !$settingsView ||
+  !$settingsForm ||
+  !$settingsCategories ||
+  !$settingsCategoriesLabel
 ) {
-  throw new Error(`The $scoreSpan or $nextButtons or $newGame or $newGameView or
+  throw new Error(`The $mobileNavMenu or $hamburgerMenu or $settingsButtons or
+    $scoreSpan or $newGameButtons or $nextButtons or $newGameView or
     $triviaQuestionView or $triviaQuestionForm or $correctAnswerView or
     $correctAnswerForm or $incorrectAnswerView or $incorrectAnswerForm or
-    $settingsView query failed`);
+    $settingsView or $settingsForm or $settingsCategories or
+    $settingsCategoriesLabel query failed`);
 }
 const views = [
   $newGameView,
@@ -71,6 +85,26 @@ async function fetchTriviaData(url) {
   } catch (error) {
     alert('Error:' + error);
   }
+}
+async function processTriviaQuestion() {
+  if ($triviaQuestionForm) $triviaQuestionForm.innerHTML = '';
+  viewSwapAndUpdateScore('trivia-question');
+  let url = 'https://opentdb.com/api.php?amount=1&type=multiple';
+  if (data.category !== '') url += `&category=${data.category}`;
+  const fetchedTriviaData = await fetchTriviaData(url);
+  if (fetchedTriviaData) {
+    data.currentQuestion = fetchedTriviaData.results[0];
+    const randomCorrectIndex = Math.floor(Math.random() * 4);
+    const answers = [...data.currentQuestion.incorrect_answers];
+    answers.splice(randomCorrectIndex, 0, data.currentQuestion.correct_answer);
+    data.currentAnswers = answers;
+    $triviaQuestionForm?.appendChild(
+      renderTriviaQuestionAnswers(data.currentQuestion),
+    );
+  }
+  data.entries.push(fetchedTriviaData);
+  data.nextEntryId++;
+  writeData();
 }
 function renderTriviaQuestionAnswers(fetchedTriviaData) {
   const $domTreeDiv = document.createElement('div');
@@ -131,29 +165,31 @@ function renderTriviaQuestionAnswers(fetchedTriviaData) {
   if (data.view === 'trivia-question') $domTreeDiv.appendChild($divButtonWrap);
   return $domTreeDiv;
 }
-$newGameButton.addEventListener('click', async () => {
-  data.entries = [];
-  data.currentQuestion = null;
-  data.currentAnswers = null;
-  data.submittedAnswer = '';
-  data.score = 0;
-  data.nextEntryId = 1;
-  viewSwapAndUpdateScore('trivia-question');
-  const fetchedTriviaData = await fetchTriviaData(
-    'https://opentdb.com/api.php?amount=1&type=multiple',
-  );
-  if (fetchedTriviaData) {
-    data.currentQuestion = fetchedTriviaData.results[0];
-    const randomCorrectIndex = Math.floor(Math.random() * 4);
-    const answers = [...data.currentQuestion.incorrect_answers];
-    answers.splice(randomCorrectIndex, 0, data.currentQuestion.correct_answer);
-    data.currentAnswers = answers;
-    $triviaQuestionForm.appendChild(
-      renderTriviaQuestionAnswers(data.currentQuestion),
-    );
+$hamburgerMenu.addEventListener('click', () => {
+  if ($mobileNavMenu.classList.contains('hidden')) {
+    $mobileNavMenu.classList.remove('hidden');
+  } else {
+    $mobileNavMenu.classList.add('hidden');
   }
-  data.entries.push(fetchedTriviaData);
-  writeData();
+});
+$newGameButtons.forEach(($newGameButton) => {
+  $newGameButton.addEventListener('click', async () => {
+    if (apiCallBlockTimer) {
+      alert('Please wait 5 seconds before clicking new game.');
+      return;
+    }
+    apiCallBlockTimer = true;
+    setTimeout(() => {
+      apiCallBlockTimer = false;
+    }, 5000);
+    data.entries = [];
+    data.currentQuestion = null;
+    data.currentAnswers = null;
+    data.submittedAnswer = '';
+    data.score = 0;
+    data.nextEntryId = 0;
+    processTriviaQuestion();
+  });
 });
 $triviaQuestionForm.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -173,9 +209,10 @@ $triviaQuestionForm.addEventListener('submit', (event) => {
       renderTriviaQuestionAnswers(data.currentQuestion),
     );
   }
+  writeData();
 });
-$nextButtons.forEach((nButton) => {
-  nButton.addEventListener('click', async () => {
+$nextButtons.forEach(($nextButton) => {
+  $nextButton.addEventListener('click', async () => {
     if (apiCallBlockTimer) {
       alert('Please wait 5 seconds before clicking next question.');
       return;
@@ -184,26 +221,57 @@ $nextButtons.forEach((nButton) => {
     setTimeout(() => {
       apiCallBlockTimer = false;
     }, 5000);
-    $triviaQuestionForm.innerHTML = '';
-    viewSwapAndUpdateScore('trivia-question');
-    const fetchedTriviaData = await fetchTriviaData(
-      'https://opentdb.com/api.php?amount=1&type=multiple',
-    );
-    if (fetchedTriviaData) {
-      data.currentQuestion = fetchedTriviaData.results[0];
-      const randomCorrectIndex = Math.floor(Math.random() * 4);
-      const answers = [...data.currentQuestion.incorrect_answers];
-      answers.splice(
-        randomCorrectIndex,
-        0,
-        data.currentQuestion.correct_answer,
-      );
-      data.currentAnswers = answers;
-      $triviaQuestionForm.appendChild(
-        renderTriviaQuestionAnswers(data.currentQuestion),
-      );
-    }
-    data.entries.push(fetchedTriviaData);
-    writeData();
+    processTriviaQuestion();
   });
+});
+$settingsButtons.forEach(($settingsButton) => {
+  $settingsButton.addEventListener('click', async () => {
+    if (apiCallBlockTimer) {
+      alert('Please wait 5 seconds before clicking settings.');
+      return;
+    }
+    apiCallBlockTimer = true;
+    setTimeout(() => {
+      apiCallBlockTimer = false;
+    }, 5000);
+    let categories;
+    try {
+      const response = await fetch('https://opentdb.com/api_category.php');
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      categories = await response.json();
+    } catch (error) {
+      alert('Error:' + error);
+    }
+    const $labelCategory = document.createElement('label');
+    $labelCategory.setAttribute('for', 'category');
+    $labelCategory.textContent = 'Select Category:';
+    const $selectCategory = document.createElement('select');
+    $selectCategory.id = 'category';
+    $selectCategory.name = 'category';
+    const $optionSelectEmpty = document.createElement('option');
+    $optionSelectEmpty.value = '';
+    $optionSelectEmpty.textContent = 'Select';
+    $selectCategory.appendChild($optionSelectEmpty);
+    categories?.trivia_categories.forEach((category) => {
+      const $optionSelectCategory = document.createElement('option');
+      $optionSelectCategory.value = `${category.id}`;
+      $optionSelectCategory.textContent = category.name;
+      $selectCategory.appendChild($optionSelectCategory);
+    });
+    $settingsCategories.innerHTML = '';
+    $settingsCategories.appendChild($selectCategory);
+    $settingsCategoriesLabel.innerHTML = '';
+    $settingsCategoriesLabel.appendChild($labelCategory);
+    viewSwapAndUpdateScore('settings');
+  });
+});
+$settingsForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const $formElements = $settingsForm;
+  data.category = $formElements.category.value;
+  data.difficulty = $formElements.difficulty.value;
+  data.type = $formElements.type.value;
+  writeData();
 });

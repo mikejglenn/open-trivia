@@ -12,18 +12,30 @@
   flex-wrap: wrap;
 }
 
+header .row {
+  justify-content: space-between;
+}
+
 main .row {
   justify-content: center;
 }
 
 .column-logo {
   width: 10rem;
-  padding-top: 0.5rem;
+  padding-top: 0.6rem;
 }
 
 .column-full,
 .column-half {
   width: 100%;
+}
+
+.nav-mobile {
+  display: flex;
+}
+
+.nav-desk {
+  display: none;
 }
 
 @media screen and (width >= 768px) {
@@ -42,5 +54,14 @@ main .row {
 
   .column-two-thirds {
     flex-basis: calc(100% / 3 * 2);
+  }
+
+  .nav-mobile {
+    display: none;
+  }
+
+  .nav-desk {
+    display: block;
+    text-align: right;
   }
 }
