@@ -110,7 +110,8 @@ label {
 
 .placeholder,
 .correct,
-.incorrect {
+.incorrect,
+.settings-text {
   text-transform: uppercase;
   text-align: center;
   padding-bottom: 1rem;
