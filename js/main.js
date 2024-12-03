@@ -81,6 +81,26 @@ async function fetchTriviaData(url) {
     alert('Error:' + error);
   }
 }
+async function processTriviaQuestion() {
+  if ($triviaQuestionForm) $triviaQuestionForm.innerHTML = '';
+  viewSwapAndUpdateScore('trivia-question');
+  let url = 'https://opentdb.com/api.php?amount=1&type=multiple';
+  if (data.category !== '') url += `&category=${data.category}`;
+  const fetchedTriviaData = await fetchTriviaData(url);
+  if (fetchedTriviaData) {
+    data.currentQuestion = fetchedTriviaData.results[0];
+    const randomCorrectIndex = Math.floor(Math.random() * 4);
+    const answers = [...data.currentQuestion.incorrect_answers];
+    answers.splice(randomCorrectIndex, 0, data.currentQuestion.correct_answer);
+    data.currentAnswers = answers;
+    $triviaQuestionForm?.appendChild(
+      renderTriviaQuestionAnswers(data.currentQuestion),
+    );
+  }
+  data.entries.push(fetchedTriviaData);
+  data.nextEntryId++;
+  writeData();
+}
 function renderTriviaQuestionAnswers(fetchedTriviaData) {
   const $domTreeDiv = document.createElement('div');
   const $divQuestion = document.createElement('div');
@@ -150,7 +170,7 @@ $hamburgerMenu.addEventListener('click', () => {
 $newGameButtons.forEach(($newGameButton) => {
   $newGameButton.addEventListener('click', async () => {
     if (apiCallBlockTimer) {
-      alert('Please wait 5 seconds before clicking next question.');
+      alert('Please wait 5 seconds before clicking new game.');
       return;
     }
     apiCallBlockTimer = true;
@@ -163,28 +183,7 @@ $newGameButtons.forEach(($newGameButton) => {
     data.submittedAnswer = '';
     data.score = 0;
     data.nextEntryId = 0;
-    $triviaQuestionForm.innerHTML = '';
-    viewSwapAndUpdateScore('trivia-question');
-    let url = 'https://opentdb.com/api.php?amount=1&type=multiple';
-    if (data.category !== '') url += `&category=${data.category}`;
-    const fetchedTriviaData = await fetchTriviaData(url);
-    if (fetchedTriviaData) {
-      data.currentQuestion = fetchedTriviaData.results[0];
-      const randomCorrectIndex = Math.floor(Math.random() * 4);
-      const answers = [...data.currentQuestion.incorrect_answers];
-      answers.splice(
-        randomCorrectIndex,
-        0,
-        data.currentQuestion.correct_answer,
-      );
-      data.currentAnswers = answers;
-      $triviaQuestionForm.appendChild(
-        renderTriviaQuestionAnswers(data.currentQuestion),
-      );
-    }
-    data.entries.push(fetchedTriviaData);
-    data.nextEntryId++;
-    writeData();
+    processTriviaQuestion();
   });
 });
 $triviaQuestionForm.addEventListener('submit', (event) => {
@@ -217,28 +216,7 @@ $nextButtons.forEach(($nextButton) => {
     setTimeout(() => {
       apiCallBlockTimer = false;
     }, 5000);
-    $triviaQuestionForm.innerHTML = '';
-    viewSwapAndUpdateScore('trivia-question');
-    let url = 'https://opentdb.com/api.php?amount=1&type=multiple';
-    if (data.category !== '') url += `&category=${data.category}`;
-    const fetchedTriviaData = await fetchTriviaData(url);
-    if (fetchedTriviaData) {
-      data.currentQuestion = fetchedTriviaData.results[0];
-      const randomCorrectIndex = Math.floor(Math.random() * 4);
-      const answers = [...data.currentQuestion.incorrect_answers];
-      answers.splice(
-        randomCorrectIndex,
-        0,
-        data.currentQuestion.correct_answer,
-      );
-      data.currentAnswers = answers;
-      $triviaQuestionForm.appendChild(
-        renderTriviaQuestionAnswers(data.currentQuestion),
-      );
-    }
-    data.entries.push(fetchedTriviaData);
-    data.nextEntryId++;
-    writeData();
+    processTriviaQuestion();
   });
 });
 $settingsButtons.forEach(($settingsButton) => {
