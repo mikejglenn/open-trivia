@@ -11,7 +11,10 @@ function readData() {
       currentAnswers: null,
       submittedAnswer: '',
       score: 0,
-      nextEntryId: 1,
+      category: '',
+      difficulty: '',
+      type: '',
+      nextEntryId: 0,
     };
   }
 }
