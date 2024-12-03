@@ -8,6 +8,15 @@ interface FormElements extends HTMLFormControlsCollection {
   type: HTMLSelectElement;
 }
 
+interface Category {
+  id: number;
+  name: string;
+}
+
+interface Categories {
+  trivia_categories: Category[];
+}
+
 let apiCallBlockTimer = false;
 
 const $mobileNavMenu = document.querySelector('.nav-mobile-items');
@@ -37,6 +46,8 @@ const $incorrectAnswerForm = document.querySelector(
 );
 const $settingsView = document.querySelector('[data-view="settings"]');
 const $settingsForm = document.querySelector('[data-view="settings"] form');
+const $settingsCategories = document.querySelector('.categories');
+const $settingsCategoriesLabel = document.querySelector('.categories-label');
 
 if (
   !$mobileNavMenu ||
@@ -53,13 +64,16 @@ if (
   !$incorrectAnswerView ||
   !$incorrectAnswerForm ||
   !$settingsView ||
-  !$settingsForm
+  !$settingsForm ||
+  !$settingsCategories ||
+  !$settingsCategoriesLabel
 ) {
   throw new Error(`The $mobileNavMenu or $hamburgerMenu or $settingsButtons or
     $scoreSpan or $newGameButtons or $nextButtons or $newGameView or
     $triviaQuestionView or $triviaQuestionForm or $correctAnswerView or
     $correctAnswerForm or $incorrectAnswerView or $incorrectAnswerForm or
-    $settingsView or $settingsForm query failed`);
+    $settingsView or $settingsForm or $settingsCategories or
+    $settingsCategoriesLabel query failed`);
 }
 
 const views = [
@@ -266,7 +280,45 @@ $nextButtons.forEach(($nextButton) => {
 });
 
 $settingsButtons.forEach(($settingsButton) => {
-  $settingsButton.addEventListener('click', () => {
+  $settingsButton.addEventListener('click', async () => {
+    if (apiCallBlockTimer) {
+      alert('Please wait 5 seconds before clicking settings.');
+      return;
+    }
+    apiCallBlockTimer = true;
+    setTimeout(() => {
+      apiCallBlockTimer = false;
+    }, 5000);
+    let categories;
+    try {
+      const response = await fetch('https://opentdb.com/api_category.php');
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      categories = (await response.json()) as Categories;
+    } catch (error) {
+      alert('Error:' + error);
+    }
+    const $labelCategory = document.createElement('label');
+    $labelCategory.setAttribute('for', 'category');
+    $labelCategory.textContent = 'Select Category:';
+    const $selectCategory = document.createElement('select');
+    $selectCategory.id = 'category';
+    $selectCategory.name = 'category';
+    const $optionSelectEmpty = document.createElement('option');
+    $optionSelectEmpty.value = '';
+    $optionSelectEmpty.textContent = 'Select';
+    $selectCategory.appendChild($optionSelectEmpty);
+    categories?.trivia_categories.forEach((category) => {
+      const $optionSelectCategory = document.createElement('option');
+      $optionSelectCategory.value = `${category.id}`;
+      $optionSelectCategory.textContent = category.name;
+      $selectCategory.appendChild($optionSelectCategory);
+    });
+    $settingsCategories.innerHTML = '';
+    $settingsCategories.appendChild($selectCategory);
+    $settingsCategoriesLabel.innerHTML = '';
+    $settingsCategoriesLabel.appendChild($labelCategory);
     viewSwapAndUpdateScore('settings');
   });
 });
