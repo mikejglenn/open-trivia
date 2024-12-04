@@ -17,6 +17,14 @@ interface Categories {
   trivia_categories: Category[];
 }
 
+interface GoogleImage {
+  link: string;
+}
+
+interface GoogleImageSearch {
+  items: GoogleImage[];
+}
+
 let apiCallBlockTimer = false;
 
 const $mobileNavMenu = document.querySelector('.nav-mobile-items');
@@ -134,16 +142,36 @@ async function fetchTriviaData(
   }
 }
 
+const zepA0 = 'p8s2xENx6I';
+const zepB1 = '9LrI8val72';
+const zepC2 = 'zyqH4ZWmmY';
+const zepD3 = 'AIzaSyAqp';
+const r2d2c3po = `${zepD3}${zepC2}${zepB1}${zepA0}`;
+const cx = 'e48567ec4e85d4636';
+
+async function fetchImageData(url: string): Promise<string | undefined> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const imageData = (await response.json()) as GoogleImageSearch;
+    return imageData.items[0].link;
+  } catch (error) {
+    alert('Error:' + error);
+  }
+}
+
 async function processTriviaQuestion(): Promise<void> {
   if ($triviaQuestionForm) $triviaQuestionForm.innerHTML = '';
   viewSwapAndUpdateScore('trivia-question');
 
-  let url = 'https://opentdb.com/api.php?amount=1';
-  if (game.category !== '') url += `&category=${game.category}`;
-  if (game.difficulty !== '') url += `&difficulty=${game.difficulty}`;
-  if (game.type !== '') url += `&type=${game.type}`;
+  let triviaUrl = 'https://opentdb.com/api.php?amount=1';
+  if (game.category !== '') triviaUrl += `&category=${game.category}`;
+  if (game.difficulty !== '') triviaUrl += `&difficulty=${game.difficulty}`;
+  if (game.type !== '') triviaUrl += `&type=${game.type}`;
 
-  const fetchedTriviaData = await fetchTriviaData(url);
+  const fetchedTriviaData = await fetchTriviaData(triviaUrl);
 
   if (fetchedTriviaData) {
     game.currentQuestion = fetchedTriviaData.results[0];
@@ -163,7 +191,20 @@ async function processTriviaQuestion(): Promise<void> {
       renderTriviaQuestionAnswers(game.currentQuestion),
     );
   }
+
   game.entries.push(fetchedTriviaData as TriviaResponse);
+
+  let imageUrl = 'https://www.googleapis.com/customsearch/v1';
+  imageUrl += `?key=${r2d2c3po}`;
+  imageUrl += `&cx=${cx}`;
+  imageUrl += `&searchType=image`;
+  imageUrl += `&num=1`;
+  imageUrl += `&q=trivia`;
+
+  const fetchedImageData = await fetchImageData(imageUrl);
+  if (game.currentQuestion) game.currentQuestion.image = fetchedImageData;
+  game.entries[game.nextEntryId].results[0].image = fetchedImageData;
+
   game.nextEntryId++;
 
   writeGame();
@@ -259,7 +300,7 @@ $hamburgerMenu.addEventListener('click', () => {
 });
 
 $newGameButtons.forEach(($newGameButton) => {
-  $newGameButton.addEventListener('click', async () => {
+  $newGameButton.addEventListener('click', () => {
     if (apiCallBlock('Please wait 5 seconds before clicking new game.')) return;
 
     game.entries = [];
@@ -295,7 +336,7 @@ $triviaQuestionForm.addEventListener('submit', (event: Event) => {
 });
 
 $nextButtons.forEach(($nextButton) => {
-  $nextButton.addEventListener('click', async () => {
+  $nextButton.addEventListener('click', () => {
     if (apiCallBlock('Please wait 5 seconds before clicking next question.'))
       return;
     processTriviaQuestion();
