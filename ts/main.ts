@@ -91,7 +91,7 @@ const views = [
 ];
 
 function viewSwapAndUpdateScore(viewName: string): void {
-  if ($scoreSpan) $scoreSpan.innerHTML = `${data.score}`;
+  if ($scoreSpan) $scoreSpan.innerHTML = `${game.score}`;
   views.forEach((_, i) => {
     if (viewName === views[i].getAttribute('data-view')) {
       views[i].classList.remove('hidden');
@@ -99,8 +99,8 @@ function viewSwapAndUpdateScore(viewName: string): void {
       views[i].classList.add('hidden');
     }
   });
-  data.view = viewName;
-  writeData();
+  game.view = viewName;
+  writeGame();
 }
 
 async function fetchTriviaData(
@@ -111,8 +111,8 @@ async function fetchTriviaData(
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    const data = (await response.json()) as TriviaResponse;
-    return data;
+    const triviaData = (await response.json()) as TriviaResponse;
+    return triviaData;
   } catch (error) {
     alert('Error:' + error);
   }
@@ -123,34 +123,34 @@ async function processTriviaQuestion(): Promise<void> {
   viewSwapAndUpdateScore('trivia-question');
 
   let url = 'https://opentdb.com/api.php?amount=1';
-  if (data.category !== '') url += `&category=${data.category}`;
-  if (data.difficulty !== '') url += `&difficulty=${data.difficulty}`;
-  if (data.type !== '') url += `&type=${data.type}`;
+  if (game.category !== '') url += `&category=${game.category}`;
+  if (game.difficulty !== '') url += `&difficulty=${game.difficulty}`;
+  if (game.type !== '') url += `&type=${game.type}`;
 
   const fetchedTriviaData = await fetchTriviaData(url);
 
   if (fetchedTriviaData) {
-    data.currentQuestion = fetchedTriviaData.results[0];
-    if (data.currentQuestion.type === 'boolean') {
-      data.currentAnswers = ['True', 'False'];
+    game.currentQuestion = fetchedTriviaData.results[0];
+    if (game.currentQuestion.type === 'boolean') {
+      game.currentAnswers = ['True', 'False'];
     } else {
       const randomCorrectIndex = Math.floor(Math.random() * 4);
-      const answers = [...data.currentQuestion.incorrect_answers];
+      const answers = [...game.currentQuestion.incorrect_answers];
       answers.splice(
         randomCorrectIndex,
         0,
-        data.currentQuestion.correct_answer,
+        game.currentQuestion.correct_answer,
       );
-      data.currentAnswers = answers;
+      game.currentAnswers = answers;
     }
     $triviaQuestionForm?.appendChild(
-      renderTriviaQuestionAnswers(data.currentQuestion),
+      renderTriviaQuestionAnswers(game.currentQuestion),
     );
   }
-  data.entries.push(fetchedTriviaData as TriviaResponse);
-  data.nextEntryId++;
+  game.entries.push(fetchedTriviaData as TriviaResponse);
+  game.nextEntryId++;
 
-  writeData();
+  writeGame();
 }
 
 function renderTriviaQuestionAnswers(
@@ -164,8 +164,8 @@ function renderTriviaQuestionAnswers(
 
   const $divRadioGroup = document.createElement('div');
 
-  if (data.currentAnswers) {
-    data.currentAnswers.forEach((answer, i) => {
+  if (game.currentAnswers) {
+    game.currentAnswers.forEach((answer, i) => {
       const $divAnswer = document.createElement('div');
       const $inputAnswer = document.createElement('input');
       const $labelAnswer = document.createElement('label');
@@ -173,29 +173,29 @@ function renderTriviaQuestionAnswers(
       let answerIndex;
       $labelAnswer.innerHTML = answer;
 
-      if (answer === data.currentQuestion?.correct_answer) {
+      if (answer === game.currentQuestion?.correct_answer) {
         answerIndex = i + 'c';
       } else {
         answerIndex = i;
       }
 
-      if (data.view === 'correct-answer') {
+      if (game.view === 'correct-answer') {
         $inputAnswer.disabled = true;
-        if (answer === data.submittedAnswer) {
+        if (answer === game.submittedAnswer) {
           $inputAnswer.classList.add('correct-radio');
           $inputAnswer.checked = true;
           $labelAnswer.classList.add('correct-label');
         }
       }
 
-      if (data.view === 'incorrect-answer') {
+      if (game.view === 'incorrect-answer') {
         $inputAnswer.disabled = true;
-        if (answer === data.submittedAnswer) {
+        if (answer === game.submittedAnswer) {
           $inputAnswer.classList.add('incorrect-radio');
           $inputAnswer.checked = true;
           $labelAnswer.classList.add('incorrect-label');
         }
-        if (answer === data.currentQuestion?.correct_answer) {
+        if (answer === game.currentQuestion?.correct_answer) {
           $labelAnswer.classList.add('correct-label');
         }
       }
@@ -225,7 +225,7 @@ function renderTriviaQuestionAnswers(
   $domTreeDiv.appendChild($divRadioGroup);
 
   $divButtonWrap.appendChild($buttonSubmit);
-  if (data.view === 'trivia-question') $domTreeDiv.appendChild($divButtonWrap);
+  if (game.view === 'trivia-question') $domTreeDiv.appendChild($divButtonWrap);
 
   return $domTreeDiv;
 }
@@ -249,12 +249,12 @@ $newGameButtons.forEach(($newGameButton) => {
       apiCallBlockTimer = false;
     }, 5000);
 
-    data.entries = [];
-    data.currentQuestion = null;
-    data.currentAnswers = null;
-    data.submittedAnswer = '';
-    data.score = 0;
-    data.nextEntryId = 0;
+    game.entries = [];
+    game.currentQuestion = null;
+    game.currentAnswers = null;
+    game.submittedAnswer = '';
+    game.score = 0;
+    game.nextEntryId = 0;
 
     processTriviaQuestion();
   });
@@ -263,22 +263,22 @@ $newGameButtons.forEach(($newGameButton) => {
 $triviaQuestionForm.addEventListener('submit', (event: Event) => {
   event.preventDefault();
   const $triviaFormRadioAnswers = $triviaQuestionForm as unknown as TriviaForm;
-  data.submittedAnswer = $triviaFormRadioAnswers.answer.value;
-  if (data.submittedAnswer === data.currentQuestion?.correct_answer) {
-    data.score++;
+  game.submittedAnswer = $triviaFormRadioAnswers.answer.value;
+  if (game.submittedAnswer === game.currentQuestion?.correct_answer) {
+    game.score++;
     $correctAnswerForm.innerHTML = '';
     viewSwapAndUpdateScore('correct-answer');
     $correctAnswerForm.appendChild(
-      renderTriviaQuestionAnswers(data.currentQuestion),
+      renderTriviaQuestionAnswers(game.currentQuestion),
     );
-  } else if (data.currentQuestion) {
+  } else if (game.currentQuestion) {
     $incorrectAnswerForm.innerHTML = '';
     viewSwapAndUpdateScore('incorrect-answer');
     $incorrectAnswerForm.appendChild(
-      renderTriviaQuestionAnswers(data.currentQuestion),
+      renderTriviaQuestionAnswers(game.currentQuestion),
     );
   }
-  writeData();
+  writeGame();
 });
 
 $nextButtons.forEach(($nextButton) => {
@@ -336,9 +336,9 @@ $settingsButtons.forEach(($settingsButton) => {
     $settingsCategoriesLabel.innerHTML = '';
     $settingsCategoriesLabel.appendChild($labelCategory);
 
-    $selectCategory.value = data.category;
-    $selectDifficulty.value = data.difficulty;
-    $selectType.value = data.type;
+    $selectCategory.value = game.category;
+    $selectDifficulty.value = game.difficulty;
+    $selectType.value = game.type;
 
     viewSwapAndUpdateScore('settings');
   });
@@ -347,8 +347,8 @@ $settingsButtons.forEach(($settingsButton) => {
 $settingsForm.addEventListener('submit', (event: Event) => {
   event.preventDefault();
   const $formElements = $settingsForm as unknown as FormElements;
-  data.category = $formElements.category.value;
-  data.difficulty = $formElements.difficulty.value;
-  data.type = $formElements.type.value;
-  writeData();
+  game.category = $formElements.category.value;
+  game.difficulty = $formElements.difficulty.value;
+  game.type = $formElements.type.value;
+  writeGame();
 });
