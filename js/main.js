@@ -3,7 +3,8 @@ let apiCallBlockTimer = false;
 const $mobileNavMenu = document.querySelector('.nav-mobile-items');
 const $hamburgerMenu = document.querySelector('.nav-mobile i');
 const $settingsButtons = document.querySelectorAll('.settings-button');
-const $scoreSpan = document.querySelector('.score span');
+const $scoreCorrectSpan = document.querySelector('.score-correct');
+const $scoreTotalSpan = document.querySelector('.score-total');
 const $newGameButtons = document.querySelectorAll('.new-game-button');
 const $nextButtons = document.querySelectorAll('.next-question');
 const $newGameView = document.querySelector('[data-view="new-game"]');
@@ -35,7 +36,8 @@ if (
   !$mobileNavMenu ||
   !$hamburgerMenu ||
   !$settingsButtons ||
-  !$scoreSpan ||
+  !$scoreCorrectSpan ||
+  !$scoreTotalSpan ||
   !$newGameButtons ||
   !$nextButtons ||
   !$newGameView ||
@@ -53,11 +55,12 @@ if (
   !$selectType
 ) {
   throw new Error(`The $mobileNavMenu or $hamburgerMenu or $settingsButtons or
-    $scoreSpan or $newGameButtons or $nextButtons or $newGameView or
-    $triviaQuestionView or $triviaQuestionForm or $correctAnswerView or
-    $correctAnswerForm or $incorrectAnswerView or $incorrectAnswerForm or
-    $settingsView or $settingsForm or $settingsCategories or
-    $settingsCategoriesLabel or $selectDifficulty or $selectType query failed`);
+    $scoreCorrectSpan or $scoreTotalSpan or $newGameButtons or $nextButtons or
+    $newGameView or $triviaQuestionView or $triviaQuestionForm or
+    $correctAnswerView or $correctAnswerForm or $incorrectAnswerView or
+    $incorrectAnswerForm or $settingsView or $settingsForm or
+    $settingsCategories or $settingsCategoriesLabel or $selectDifficulty or
+    $selectType query failed`);
 }
 const views = [
   $newGameView,
@@ -67,7 +70,8 @@ const views = [
   $settingsView,
 ];
 function viewSwapAndUpdateScore(viewName) {
-  if ($scoreSpan) $scoreSpan.innerHTML = `${game.score}`;
+  if ($scoreCorrectSpan) $scoreCorrectSpan.innerHTML = `${game.score}`;
+  if ($scoreTotalSpan) $scoreTotalSpan.innerHTML = `${game.entries.length}`;
   views.forEach((_, i) => {
     if (viewName === views[i].getAttribute('data-view')) {
       views[i].classList.remove('hidden');
@@ -77,6 +81,17 @@ function viewSwapAndUpdateScore(viewName) {
   });
   game.view = viewName;
   writeGame();
+}
+function apiCallBlock(alertMessage) {
+  if (apiCallBlockTimer) {
+    alert(alertMessage);
+    return true;
+  }
+  apiCallBlockTimer = true;
+  setTimeout(() => {
+    apiCallBlockTimer = false;
+  }, 5000);
+  return false;
 }
 async function fetchTriviaData(url) {
   try {
@@ -192,14 +207,7 @@ $hamburgerMenu.addEventListener('click', () => {
 });
 $newGameButtons.forEach(($newGameButton) => {
   $newGameButton.addEventListener('click', async () => {
-    if (apiCallBlockTimer) {
-      alert('Please wait 5 seconds before clicking new game.');
-      return;
-    }
-    apiCallBlockTimer = true;
-    setTimeout(() => {
-      apiCallBlockTimer = false;
-    }, 5000);
+    if (apiCallBlock('Please wait 5 seconds before clicking new game.')) return;
     game.entries = [];
     game.currentQuestion = null;
     game.currentAnswers = null;
@@ -231,27 +239,14 @@ $triviaQuestionForm.addEventListener('submit', (event) => {
 });
 $nextButtons.forEach(($nextButton) => {
   $nextButton.addEventListener('click', async () => {
-    if (apiCallBlockTimer) {
-      alert('Please wait 5 seconds before clicking next question.');
+    if (apiCallBlock('Please wait 5 seconds before clicking next question.'))
       return;
-    }
-    apiCallBlockTimer = true;
-    setTimeout(() => {
-      apiCallBlockTimer = false;
-    }, 5000);
     processTriviaQuestion();
   });
 });
 $settingsButtons.forEach(($settingsButton) => {
   $settingsButton.addEventListener('click', async () => {
-    if (apiCallBlockTimer) {
-      alert('Please wait 5 seconds before clicking settings.');
-      return;
-    }
-    apiCallBlockTimer = true;
-    setTimeout(() => {
-      apiCallBlockTimer = false;
-    }, 5000);
+    if (apiCallBlock('Please wait 5 seconds before clicking settings.')) return;
     let categories;
     try {
       const response = await fetch('https://opentdb.com/api_category.php');
