@@ -29,6 +29,8 @@ const $settingsView = document.querySelector('[data-view="settings"]');
 const $settingsForm = document.querySelector('[data-view="settings"] form');
 const $settingsCategories = document.querySelector('.categories');
 const $settingsCategoriesLabel = document.querySelector('.categories-label');
+const $selectDifficulty = document.querySelector('#difficulty');
+const $selectType = document.querySelector('#type');
 if (
   !$mobileNavMenu ||
   !$hamburgerMenu ||
@@ -46,14 +48,16 @@ if (
   !$settingsView ||
   !$settingsForm ||
   !$settingsCategories ||
-  !$settingsCategoriesLabel
+  !$settingsCategoriesLabel ||
+  !$selectDifficulty ||
+  !$selectType
 ) {
   throw new Error(`The $mobileNavMenu or $hamburgerMenu or $settingsButtons or
     $scoreSpan or $newGameButtons or $nextButtons or $newGameView or
     $triviaQuestionView or $triviaQuestionForm or $correctAnswerView or
     $correctAnswerForm or $incorrectAnswerView or $incorrectAnswerForm or
     $settingsView or $settingsForm or $settingsCategories or
-    $settingsCategoriesLabel query failed`);
+    $settingsCategoriesLabel or $selectDifficulty or $selectType query failed`);
 }
 const views = [
   $newGameView,
@@ -89,15 +93,25 @@ async function fetchTriviaData(url) {
 async function processTriviaQuestion() {
   if ($triviaQuestionForm) $triviaQuestionForm.innerHTML = '';
   viewSwapAndUpdateScore('trivia-question');
-  let url = 'https://opentdb.com/api.php?amount=1&type=multiple';
+  let url = 'https://opentdb.com/api.php?amount=1';
   if (data.category !== '') url += `&category=${data.category}`;
+  if (data.difficulty !== '') url += `&difficulty=${data.difficulty}`;
+  if (data.type !== '') url += `&type=${data.type}`;
   const fetchedTriviaData = await fetchTriviaData(url);
   if (fetchedTriviaData) {
     data.currentQuestion = fetchedTriviaData.results[0];
-    const randomCorrectIndex = Math.floor(Math.random() * 4);
-    const answers = [...data.currentQuestion.incorrect_answers];
-    answers.splice(randomCorrectIndex, 0, data.currentQuestion.correct_answer);
-    data.currentAnswers = answers;
+    if (data.currentQuestion.type === 'boolean') {
+      data.currentAnswers = ['True', 'False'];
+    } else {
+      const randomCorrectIndex = Math.floor(Math.random() * 4);
+      const answers = [...data.currentQuestion.incorrect_answers];
+      answers.splice(
+        randomCorrectIndex,
+        0,
+        data.currentQuestion.correct_answer,
+      );
+      data.currentAnswers = answers;
+    }
     $triviaQuestionForm?.appendChild(
       renderTriviaQuestionAnswers(data.currentQuestion),
     );
@@ -252,7 +266,7 @@ $settingsButtons.forEach(($settingsButton) => {
     $selectCategory.name = 'category';
     const $optionSelectEmpty = document.createElement('option');
     $optionSelectEmpty.value = '';
-    $optionSelectEmpty.textContent = 'Select';
+    $optionSelectEmpty.textContent = 'Any Category';
     $selectCategory.appendChild($optionSelectEmpty);
     categories?.trivia_categories.forEach((category) => {
       const $optionSelectCategory = document.createElement('option');
@@ -264,6 +278,9 @@ $settingsButtons.forEach(($settingsButton) => {
     $settingsCategories.appendChild($selectCategory);
     $settingsCategoriesLabel.innerHTML = '';
     $settingsCategoriesLabel.appendChild($labelCategory);
+    $selectCategory.value = data.category;
+    $selectDifficulty.value = data.difficulty;
+    $selectType.value = data.type;
     viewSwapAndUpdateScore('settings');
   });
 });
