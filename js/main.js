@@ -83,13 +83,15 @@ function viewSwapAndUpdateScore(viewName) {
   writeGame();
 }
 function apiCallBlock(alertMessage) {
-  if (!apiCallBlockTimer) return false;
-  alert(alertMessage);
+  if (apiCallBlockTimer) {
+    alert(alertMessage);
+    return true;
+  }
   apiCallBlockTimer = true;
   setTimeout(() => {
     apiCallBlockTimer = false;
   }, 5000);
-  return true;
+  return false;
 }
 async function fetchTriviaData(url) {
   try {

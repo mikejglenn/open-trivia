@@ -108,13 +108,15 @@ function viewSwapAndUpdateScore(viewName: string): void {
 }
 
 function apiCallBlock(alertMessage: string): boolean {
-  if (!apiCallBlockTimer) return false;
-  alert(alertMessage);
+  if (apiCallBlockTimer) {
+    alert(alertMessage);
+    return true;
+  }
   apiCallBlockTimer = true;
   setTimeout(() => {
     apiCallBlockTimer = false;
   }, 5000);
-  return true;
+  return false;
 }
 
 async function fetchTriviaData(
