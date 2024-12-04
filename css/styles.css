@@ -97,7 +97,7 @@ form {
 }
 
 input[type='radio'] {
-  margin: 1rem 0 0 5rem;
+  margin: 1rem 0 0;
   appearance: none;
   border-radius: 50%;
   width: 16px;

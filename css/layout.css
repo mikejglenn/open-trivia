@@ -56,6 +56,10 @@ main .row {
     flex-basis: calc(100% / 3 * 2);
   }
 
+  .column-three-quarters {
+    flex-basis: 75%;
+  }
+
   .nav-mobile {
     display: none;
   }

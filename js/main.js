@@ -122,9 +122,12 @@ async function processTriviaQuestion() {
 }
 function renderTriviaQuestionAnswers(fetchedTriviaData) {
   const $domTreeDiv = document.createElement('div');
+  $domTreeDiv.classList.add('row');
   const $divQuestion = document.createElement('div');
   $divQuestion.innerHTML = fetchedTriviaData.question;
   $divQuestion.classList.add('question');
+  $divQuestion.classList.add('row');
+  $divQuestion.classList.add('column-full');
   const $divRadioGroup = document.createElement('div');
   if (game.currentAnswers) {
     game.currentAnswers.forEach((answer, i) => {
@@ -170,6 +173,7 @@ function renderTriviaQuestionAnswers(fetchedTriviaData) {
   }
   const $divButtonWrap = document.createElement('div');
   $divButtonWrap.classList.add('row');
+  $divButtonWrap.classList.add('column-full');
   const $buttonSubmit = document.createElement('button');
   $buttonSubmit.type = 'submit';
   $buttonSubmit.textContent = 'Submit';
