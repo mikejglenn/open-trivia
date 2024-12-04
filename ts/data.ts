@@ -13,7 +13,7 @@ interface TriviaResponse {
   results: TriviaQuestion[];
 }
 
-interface Data {
+interface Game {
   view: string;
   entries: TriviaResponse[];
   currentQuestion: TriviaQuestion | null;
@@ -26,10 +26,10 @@ interface Data {
   nextEntryId: number;
 }
 
-function readData(): Data {
-  const dataJSON = localStorage.getItem('data-storage');
-  if (dataJSON !== null) {
-    return JSON.parse(dataJSON);
+function readGame(): Game {
+  const gameJSON = localStorage.getItem('game-storage');
+  if (gameJSON !== null) {
+    return JSON.parse(gameJSON);
   } else {
     return {
       view: 'new-game',
@@ -46,10 +46,10 @@ function readData(): Data {
   }
 }
 
-function writeData(): void {
-  const dataJSON = JSON.stringify(data);
-  localStorage.setItem('data-storage', dataJSON);
+function writeGame(): void {
+  const gameJSON = JSON.stringify(game);
+  localStorage.setItem('game-storage', gameJSON);
 }
 
-const data: Data = readData();
-writeData();
+const game: Game = readGame();
+writeGame();
