@@ -1,6 +1,3 @@
-// @ts-expect-error: Unreachable code error
-import gsap from '../node_modules/gsap/index.js';
-
 interface TriviaForm {
   answer: RadioNodeList;
 }
@@ -455,6 +452,7 @@ $dismissModal.addEventListener('click', () => {
   $dialog.close();
 });
 
+// @ts-expect-error: Unreachable code error
 gsap.to('button.new-game-button', {
   duration: 2,
   rotation: 360,
