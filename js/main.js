@@ -292,6 +292,7 @@ $newGameButtons.forEach(($newGameButton) => {
     game.submittedAnswer = '';
     game.score = 0;
     game.nextEntryId = 0;
+    $mobileNavMenu.classList.add('hidden');
     processTriviaQuestion();
   });
 });
@@ -335,6 +336,7 @@ $settingsButtons.forEach(($settingsButton) => {
     } catch (error) {
       alert('Error:' + error);
     }
+    $mobileNavMenu.classList.add('hidden');
     const $labelCategory = document.createElement('label');
     $labelCategory.setAttribute('for', 'category');
     $labelCategory.textContent = 'Select Category:';
