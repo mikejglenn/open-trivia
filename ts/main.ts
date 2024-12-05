@@ -203,9 +203,9 @@ async function processTriviaQuestion(): Promise<void> {
   let imageUrl = 'https://www.googleapis.com/customsearch/v1';
   imageUrl += `?key=${r2d2c3po}`;
   imageUrl += `&cx=${cx}`;
-  imageUrl += `&searchType=image`;
-  imageUrl += `&safe=active`;
-  imageUrl += `&num=1`;
+  imageUrl += '&searchType=image';
+  imageUrl += '&safe=active';
+  imageUrl += '&num=1';
   let searchQuery;
   if (game.currentQuestion) {
     searchQuery = decodeHtml(game.currentQuestion.question);
@@ -313,16 +313,29 @@ function renderTriviaQuestionAnswers(
   $divImgWrap.classList.add('row');
   $divImgWrap.classList.add('column-full');
   $divImgWrap.classList.add('answer-image');
-  const $divImgWrapText = document.createElement('div');
-  $divImgWrapText.classList.add('column-full');
-  $divImgWrapText.textContent = 'First Google Image result for the question:';
+  const $divImgText = document.createElement('div');
+  $divImgText.classList.add('column-full');
+  $divImgText.textContent = 'First Google Image result for the question:';
+  const $divShowImgWrap = document.createElement('div');
+  $divShowImgWrap.classList.add('column-full');
+  const $buttonShowImage = document.createElement('button');
+  $buttonShowImage.type = 'button';
+  $buttonShowImage.classList.add('show-image');
+  $buttonShowImage.textContent = 'Show image';
   const $imgGoogleSearch = document.createElement('img');
   if (game.currentQuestion?.image)
     $imgGoogleSearch.src = game.currentQuestion.image;
+  $imgGoogleSearch.classList.add('hidden');
+  $divShowImgWrap.appendChild($buttonShowImage);
 
-  $divImgWrap.appendChild($divImgWrapText);
+  $divImgWrap.appendChild($divImgText);
+  $divImgWrap.appendChild($divShowImgWrap);
   $divImgWrap.appendChild($imgGoogleSearch);
   $domTreeDiv.appendChild($divImgWrap);
+
+  $buttonShowImage.addEventListener('click', () => {
+    $imgGoogleSearch.classList.remove('hidden');
+  });
 
   return $domTreeDiv;
 }

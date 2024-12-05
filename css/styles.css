@@ -142,6 +142,7 @@ label {
 }
 
 [data-view='trivia-question'] button,
+.show-image,
 .next-question,
 [data-view='settings'] button {
   background-color: #ff7201;
@@ -155,6 +156,7 @@ label {
 
 [data-view='new-game'] button:hover,
 [data-view='trivia-question'] button:hover,
+.show-image:hover,
 .next-question:hover,
 [data-view='settings'] button:hover {
   background-color: #f90;
