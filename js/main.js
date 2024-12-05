@@ -1,5 +1,4 @@
-// @ts-expect-error: Unreachable code error
-import gsap from '../node_modules/gsap/index.js';
+'use strict';
 let apiCallBlockTimer = false;
 const $mobileNavMenu = document.querySelector('.nav-mobile-items');
 const $hamburgerMenu = document.querySelector('.nav-mobile i');
@@ -374,6 +373,7 @@ $settingsForm.addEventListener('submit', (event) => {
 $dismissModal.addEventListener('click', () => {
   $dialog.close();
 });
+// @ts-expect-error: Unreachable code error
 gsap.to('button.new-game-button', {
   duration: 2,
   rotation: 360,
