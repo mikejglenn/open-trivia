@@ -32,6 +32,8 @@ const $settingsCategories = document.querySelector('.categories');
 const $settingsCategoriesLabel = document.querySelector('.categories-label');
 const $selectDifficulty = document.querySelector('#difficulty');
 const $selectType = document.querySelector('#type');
+const $dialog = document.querySelector('dialog');
+const $dismissModal = document.querySelector('.dismiss-modal');
 if (
   !$mobileNavMenu ||
   !$hamburgerMenu ||
@@ -52,7 +54,9 @@ if (
   !$settingsCategories ||
   !$settingsCategoriesLabel ||
   !$selectDifficulty ||
-  !$selectType
+  !$selectType ||
+  !$dialog ||
+  !$dismissModal
 ) {
   throw new Error(`The $mobileNavMenu or $hamburgerMenu or $settingsButtons or
     $scoreCorrectSpan or $scoreTotalSpan or $newGameButtons or $nextButtons or
@@ -60,7 +64,7 @@ if (
     $correctAnswerView or $correctAnswerForm or $incorrectAnswerView or
     $incorrectAnswerForm or $settingsView or $settingsForm or
     $settingsCategories or $settingsCategoriesLabel or $selectDifficulty or
-    $selectType query failed`);
+    $selectType or $dialog or $dismissModal query failed`);
 }
 const views = [
   $newGameView,
@@ -363,5 +367,9 @@ $settingsForm.addEventListener('submit', (event) => {
   game.category = $formElements.category.value;
   game.difficulty = $formElements.difficulty.value;
   game.type = $formElements.type.value;
+  $dialog.showModal();
   writeGame();
+});
+$dismissModal.addEventListener('click', () => {
+  $dialog.close();
 });
