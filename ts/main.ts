@@ -162,6 +162,12 @@ async function fetchImageData(url: string): Promise<string | undefined> {
   }
 }
 
+function decodeHtml(html: string): string {
+  const txt = document.createElement('textarea');
+  txt.innerHTML = html;
+  return txt.value;
+}
+
 async function processTriviaQuestion(): Promise<void> {
   if ($triviaQuestionForm) $triviaQuestionForm.innerHTML = '';
   viewSwapAndUpdateScore('trivia-question');
@@ -202,13 +208,13 @@ async function processTriviaQuestion(): Promise<void> {
   imageUrl += `&num=1`;
   let searchQuery;
   if (game.currentQuestion) {
-    searchQuery = decodeURI(game.currentQuestion.question);
+    searchQuery = decodeHtml(game.currentQuestion.question);
   }
   if (game.currentQuestion?.type === 'multiple') {
     searchQuery =
-      decodeURI(game.currentQuestion.correct_answer) + ' ' + searchQuery;
+      decodeHtml(game.currentQuestion.correct_answer) + ' ' + searchQuery;
   }
-  searchQuery = encodeURI(`${searchQuery}`);
+  searchQuery = encodeURIComponent(`${searchQuery}`);
   imageUrl += `&q=${searchQuery}`;
 
   const fetchedImageData = await fetchImageData(imageUrl);
