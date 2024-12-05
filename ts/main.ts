@@ -198,11 +198,15 @@ async function processTriviaQuestion(): Promise<void> {
   imageUrl += `?key=${r2d2c3po}`;
   imageUrl += `&cx=${cx}`;
   imageUrl += `&searchType=image`;
-  imageUrl += `&safe=active`;
+  imageUrl += `&safe=high`;
   imageUrl += `&num=1`;
-  let searchQuery = game.currentQuestion?.question;
+  let searchQuery;
+  if (game.currentQuestion)
+    searchQuery = decodeURI(game.currentQuestion.question);
   if (game.currentQuestion?.type === 'multiple')
-    searchQuery = `${game.currentQuestion?.correct_answer} ${searchQuery}`;
+    searchQuery =
+      decodeURI(game.currentQuestion.correct_answer) + ' ' + searchQuery;
+  searchQuery = encodeURI(`${searchQuery}`);
   imageUrl += `&q=${searchQuery}`;
 
   const fetchedImageData = await fetchImageData(imageUrl);
