@@ -6,6 +6,8 @@ interface TriviaQuestion {
   incorrect_answers: string[];
   question: string;
   type: string;
+  image?: string;
+  searchStr?: string;
 }
 
 interface TriviaResponse {
