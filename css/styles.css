@@ -213,6 +213,7 @@ label {
 
 dialog {
   text-align: center;
+  border-radius: 5px;
 }
 
 @media screen and (width >= 768px) {
