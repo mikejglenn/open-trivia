@@ -154,7 +154,7 @@ async function processTriviaQuestion() {
   imageUrl += `?key=${r2d2c3po}`;
   imageUrl += `&cx=${cx}`;
   imageUrl += `&searchType=image`;
-  imageUrl += `&safe=high`;
+  imageUrl += `&safe=active`;
   imageUrl += `&num=1`;
   let searchQuery;
   if (game.currentQuestion)

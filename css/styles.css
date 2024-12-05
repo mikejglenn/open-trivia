@@ -93,7 +93,7 @@ form {
 }
 
 form img {
-  width: 80%;
+  max-width: 80%;
   margin-top: 1rem;
 }
 
@@ -150,11 +150,12 @@ label {
   padding: 0.5rem;
   border-radius: 10px;
   margin-top: 1rem;
+  font-size: 1rem;
 }
 
 [data-view='new-game'] button:hover,
 [data-view='trivia-question'] button:hover,
-.next-question,
+.next-question:hover,
 [data-view='settings'] button:hover {
   background-color: #f90;
 }
