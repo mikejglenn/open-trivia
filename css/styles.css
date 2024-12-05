@@ -144,7 +144,8 @@ label {
 [data-view='trivia-question'] button,
 .show-image,
 .next-question,
-[data-view='settings'] button {
+[data-view='settings'] button,
+.dismiss-modal {
   background-color: #ff7201;
   color: #fff;
   text-align: center;
@@ -158,7 +159,8 @@ label {
 [data-view='trivia-question'] button:hover,
 .show-image:hover,
 .next-question:hover,
-[data-view='settings'] button:hover {
+[data-view='settings'] button:hover,
+.dismiss-modal:hover {
   background-color: #f90;
 }
 
@@ -207,6 +209,10 @@ label {
 [data-view='settings'] select {
   width: 100%;
   padding: 0.2rem;
+}
+
+dialog {
+  text-align: center;
 }
 
 @media screen and (width >= 768px) {
