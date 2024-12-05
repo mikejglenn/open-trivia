@@ -157,11 +157,13 @@ async function processTriviaQuestion() {
   imageUrl += `&safe=active`;
   imageUrl += `&num=1`;
   let searchQuery;
-  if (game.currentQuestion)
+  if (game.currentQuestion) {
     searchQuery = decodeURI(game.currentQuestion.question);
-  if (game.currentQuestion?.type === 'multiple')
+  }
+  if (game.currentQuestion?.type === 'multiple') {
     searchQuery =
       decodeURI(game.currentQuestion.correct_answer) + ' ' + searchQuery;
+  }
   searchQuery = encodeURI(`${searchQuery}`);
   imageUrl += `&q=${searchQuery}`;
   const fetchedImageData = await fetchImageData(imageUrl);
@@ -242,10 +244,13 @@ function renderTriviaQuestionAnswers(fetchedTriviaData) {
   $divImgWrap.classList.add('row');
   $divImgWrap.classList.add('column-full');
   $divImgWrap.classList.add('answer-image');
-  $divImgWrap.textContent = 'First Google Image result for the question:';
+  const $divImgWrapText = document.createElement('div');
+  $divImgWrapText.classList.add('column-full');
+  $divImgWrapText.textContent = 'First Google Image result for the question:';
   const $imgGoogleSearch = document.createElement('img');
   if (game.currentQuestion?.image)
     $imgGoogleSearch.src = game.currentQuestion.image;
+  $divImgWrap.appendChild($divImgWrapText);
   $divImgWrap.appendChild($imgGoogleSearch);
   $domTreeDiv.appendChild($divImgWrap);
   return $domTreeDiv;

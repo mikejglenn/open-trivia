@@ -189,6 +189,7 @@ label {
 
 .answer-image {
   margin-top: 2rem;
+  text-align: center;
 }
 
 [data-view='settings'] form {
