@@ -60,6 +60,7 @@ header {
 
 main {
   background-color: #383e4e;
+  margin-bottom: 2rem;
 }
 
 .score {
@@ -89,6 +90,11 @@ button {
 
 form {
   padding: 0 2rem;
+}
+
+form img {
+  width: 80%;
+  margin-top: 1rem;
 }
 
 .question {
@@ -178,6 +184,10 @@ label {
 
 .incorrect-radio {
   accent-color: #f00;
+}
+
+.answer-image {
+  margin-top: 2rem;
 }
 
 [data-view='settings'] form {

@@ -7,6 +7,7 @@ interface TriviaQuestion {
   question: string;
   type: string;
   image?: string;
+  searchStr?: string;
 }
 
 interface TriviaResponse {

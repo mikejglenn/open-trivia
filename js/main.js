@@ -154,10 +154,18 @@ async function processTriviaQuestion() {
   imageUrl += `?key=${r2d2c3po}`;
   imageUrl += `&cx=${cx}`;
   imageUrl += `&searchType=image`;
+  imageUrl += `&safe=active`;
   imageUrl += `&num=1`;
-  imageUrl += `&q=trivia`;
+  let searchQuery = game.currentQuestion?.question;
+  if (game.currentQuestion?.type === 'multiple')
+    searchQuery = `${game.currentQuestion?.correct_answer} ${searchQuery}`;
+  imageUrl += `&q=${searchQuery}`;
   const fetchedImageData = await fetchImageData(imageUrl);
-  if (game.currentQuestion) game.currentQuestion.image = fetchedImageData;
+  if (game.currentQuestion) {
+    game.currentQuestion.searchStr = searchQuery;
+    game.currentQuestion.image = fetchedImageData;
+  }
+  game.entries[game.nextEntryId].results[0].searchStr = searchQuery;
   game.entries[game.nextEntryId].results[0].image = fetchedImageData;
   game.nextEntryId++;
   writeGame();
@@ -213,16 +221,29 @@ function renderTriviaQuestionAnswers(fetchedTriviaData) {
       $divRadioGroup.appendChild($divAnswer);
     });
   }
-  const $divButtonWrap = document.createElement('div');
-  $divButtonWrap.classList.add('row');
-  $divButtonWrap.classList.add('column-full');
-  const $buttonSubmit = document.createElement('button');
-  $buttonSubmit.type = 'submit';
-  $buttonSubmit.textContent = 'Submit';
   $domTreeDiv.appendChild($divQuestion);
   $domTreeDiv.appendChild($divRadioGroup);
-  $divButtonWrap.appendChild($buttonSubmit);
-  if (game.view === 'trivia-question') $domTreeDiv.appendChild($divButtonWrap);
+  if (game.view === 'trivia-question') {
+    const $divButtonWrap = document.createElement('div');
+    $divButtonWrap.classList.add('row');
+    $divButtonWrap.classList.add('column-full');
+    const $buttonSubmit = document.createElement('button');
+    $buttonSubmit.type = 'submit';
+    $buttonSubmit.textContent = 'Submit';
+    $divButtonWrap.appendChild($buttonSubmit);
+    $domTreeDiv.appendChild($divButtonWrap);
+    return $domTreeDiv;
+  }
+  const $divImgWrap = document.createElement('div');
+  $divImgWrap.classList.add('row');
+  $divImgWrap.classList.add('column-full');
+  $divImgWrap.classList.add('answer-image');
+  $divImgWrap.textContent = 'First Google Image result for the question:';
+  const $imgGoogleSearch = document.createElement('img');
+  if (game.currentQuestion?.image)
+    $imgGoogleSearch.src = game.currentQuestion.image;
+  $divImgWrap.appendChild($imgGoogleSearch);
+  $domTreeDiv.appendChild($divImgWrap);
   return $domTreeDiv;
 }
 $hamburgerMenu.addEventListener('click', () => {
